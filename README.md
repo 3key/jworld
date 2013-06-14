@@ -24,25 +24,33 @@ Modes
 * cssPrefix          | Prefix for css
 * get                | Get value
 * matrixTransition   | Set css transition property for css transform
-* reset              | reset the transform of the item
+* remove             | Remove a div from view
+* removeElements     | Remove a list of sprite divs from the view
+* reset              | Reset the transform of the item
 * set                | Set value
 * support            | Boolean indicates if css 3d transform is available
 * update             | Redraw the item or view
 * updateSize         | Update the view size
 
 Properties for world function (get/set)
-
+=======================================
 * Name          | Value
-* =====================================================
+* ===============================
 * x             | Object Position
 * y             | 
 * z             | 
 * moveX         | Move Object on local axis
 * moveY         | 
 * moveZ         | 
+* offsetX       | Move Object by offset
+* offsetY       | 
+* offsetZ       | 
 * rotateX       | get/set Object Rotation
 * rotateY       | 
 * rotateZ       | 
+* offsetRotateX | Rotate Object by offset
+* offsetRotateY | 
+* offsetRotateZ | 
 * localRotateX  | set Rotate Object on local axis
 * localRotateY  | 
 * localRotateZ  | 
