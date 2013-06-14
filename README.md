@@ -7,7 +7,7 @@ jworld - 3D for jQuery
 * @codename: Amethyst
 * @category jQuery plugin
 * @license MIT license
-* @example http://3key.at/jworld
+* @example http://3key.at/jworld/demo.html
 
 * JWorld is a fast and lightweight 3D-sprite engine based on HTML5 and CSS-3D transforms
 * JWorld  makes it easy to create camera animations in the browser without any plugins.
