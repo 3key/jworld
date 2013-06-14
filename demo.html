@@ -1,0 +1,405 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+<script type="text/javascript" src="jquery-1.10.1.js"></script>
+
+<!-- jquery mobile -->
+<link rel="stylesheet" href="jqmb/jquery.mobile-1.3.1.css">
+<link rel="stylesheet" href="themes-mb/default/jquery.mobile.theme-1.3.1.css">
+<script src="jqmb/jquery.mobile-1.3.1.js"></script>
+
+<!-- highlighter -->
+<link rel="stylesheet" href="highlighter/dessert.css" />
+
+<!-- jworld -->
+<script type="text/javascript" src="jworld-0.9.7.js"></script>
+<script type="text/javascript" src="highlighter/prettify.js"></script>
+
+<script type="text/javascript">
+
+function loaded (){
+	prettyPrint();
+	$(".view").world();
+	startView7();
+}
+
+$(document).ready(function(e) 
+{
+
+});
+</script>
+<style type="text/css">
+	#main { background:#000; color:#fff; font-weight: normal; font-size:0.93em; }
+	* { margin: 0; padding: 0; font-family:"Lucida Grande", "Lucida Sans Unicode", sans-serif; font-weight:normal;}
+	.blue-sprite, .red-sprite, .green-sprite, .yellow-sprite { width: 200px; height: 100px; background:#139; border: 2px solid #77f; border-radius: 25px; padding: 12px; opacity:.5; }
+	.red-sprite { background: #931; border-color: #f77; }
+	.green-sprite { background: #391; border-color: #7f7; }
+	.yellow-sprite { background: #991; border-color: #ff7; }
+	.ground-sprite  { background:url(images/ground.jpg); width: 256px; height:256px;
+	 }
+	.info-sprite { background:#0C0; border:3px solid #ccc; border-radius:25px; padding: 25px; opacity:.5; color:#fff;   }
+	.out { position:absolute; left: 8px; top:8px; }
+	#debug { position:absolute; right: 8px; top:8px; text-align:right; }
+	
+	
+	div.ui-corner-all { padding: 25px; }
+	div.code {  font-size: 1.1em; font-family:"Courier New", Courier, monospace; }
+	.page-wrap { margin: 25px; }
+	.sample { padding: 15px; border-radius: 11px; border-top:1px solid #777; position:relative; 
+	background-image: -webkit-gradient(linear, left top, left bottom, from( #2d2d2d /*{a-bup-background-start}*/), to( #070707 /*{a-bup-background-end}*/)); /* Saf4+, Chrome */
+	background-image: -webkit-linear-gradient(  #2d2d2d /*{a-bup-background-end}*/,#070707); /* Chrome 10+, Saf5.1+ */
+	background-image:    -moz-linear-gradient(  #2d2d2d /*{a-bup-background-end}*/,#070707); /* FF3.6 */
+	background-image:     -ms-linear-gradient( #2d2d2d /*{a-bup-background-end}*/,#070707); /* IE10 */
+	background-image:      -o-linear-gradient( #2d2d2d /*{a-bup-background-end}*/,#070707); /* Opera 11.10+ */
+	background-image:         linear-gradient( #2d2d2d /*{a-bup-background-end}*/,#070707);
+	
+	 margin:25px auto; max-width: 1024px; }
+	.view {  background:#050505; border: 2px solid #0d0d0d; border-bottom:2px solid #333; border-right:2px solid #222; border-radius:7px; color:#fff; font-size:15px; margin: 12px auto; margin-top:8px; }
+	.info {  margin: 0px; padding: 5px; font-family:"Lucida Grande", "Lucida Sans Unicode", sans-serif; font-size: 1em; }
+	.codelink { position:absolute; right: 18px; top:18px;}
+	.menu { display:inline-block; background: #000; color: #fff; }
+</style>
+</head>
+
+<body onload="loaded()">
+	
+    
+    <div id="main" data-role="page">
+    	
+        <div class="page-wrap">
+        <div class="sample">
+        <h1>JWorld - 3D for jQuery</h1>
+        <br/>
+        <p>JWorld is a jquery plugin based on HTML5 and CSS3D transforms</p> 
+        <p>You can download it <a href="./jworld-0.9.6.js" data-rel="external" target="_self">here</a> and learn more <a href="#">here</a></p>
+       
+        <br/>
+        <p>The following demos require jquery and the jworld.js script loaded in the head tag</p>
+        <br/>
+        <p>
+        <div class="code">
+            <pre>
+    &lt;script src="jquery-1.10.1.js"&gt;&lt;/script&gt;
+    &lt;script src="jworld-0.9.5.js"&gt;&lt;/script&gt;
+            </pre>
+        </div>
+        </p>
+        </div>
+        <div class="sample">
+        <div class="info">1 - A camera and one sprite</div><div class="codelink"><a href="#viewcode1" data-mini="false" data-icon="info" data-iconpos="notext" data-inline="true" data-rel="popup" data-role="button">View Code</a></div>
+        <div id="view1" class="view" data-fov="50" data-z="-300" data-width="320" data-height="200">
+            <div id="v1s1" class="blue-sprite">A Sprite</div>
+        </div>
+        <div data-role="popup" class="ui-corner-all" id="viewcode1">
+<div class="code">
+<pre class="prettyprint">
+&lt;!--
+     Create a view container with one sprite
+     Use the data- attributes to setup jworld properties
+     Note: Every item needs a unique id set
+--&gt;
+&lt;div id="view1" class="view" data-fov="50" data-z="-300" data-width="320" data-height="200"&gt;
+    &lt;!-- This is a sprite container with default transform (0,0,0) --&gt;
+    &lt;div id="v1s1" class="blue-sprite"&gt;A Sprite&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+	// In the onload handler create the view,
+    // and setup all sprites it contains
+	$("#view1").world();
+&lt;/script&gt;
+</pre>
+</div>
+        </div>
+        </div>
+        <div class="sample">
+        <div class="info">2 - More sprites and more camera</div><div class="codelink"><a href="#viewcode2" data-mini="true" data-icon="info" data-iconpos="notext" data-inline="true" data-rel="popup" data-role="button">View Code</a></div>
+         <div id="view2" class="view" data-fov="60" data-y="70" data-z="-300" data-width="640" data-height="480">
+            <div id="v2s1" class="blue-sprite" data-z="0">1st Sprite Div</div>
+            <div id="v2s2" class="red-sprite" data-z="300">2nd Sprite Div</div>
+            <div id="v2s3" class="green-sprite" data-z="600">3rd Sprite Div</div>
+        </div>
+        <div data-role="popup" class="ui-corner-all" id="viewcode2">
+<pre class="prettyprint">
+&lt;div id="view2" class="view" data-fov="60" data-y="70" data-z="-300" data-width="640" data-height="480"&gt;
+    &lt;div id="v2s1" class="blue-sprite" data-z="0"&gt;1st Sprite Div&lt;/div&gt;
+    &lt;div id="v2s2" class="red-sprite" data-z="300"&gt;2nd Sprite Div&lt;/div&gt;
+    &lt;div id="v2s3" class="green-sprite" data-z="600"&gt;3rd Sprite Div&lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+	$("#view2").world();
+&lt;/script&gt;
+</pre>
+        </div>
+        </div>
+        
+        <div class="sample">
+         <div class="info">3 - Placing the sprites</div><div class="codelink"><a href="#viewcode3" data-mini="true" data-icon="info" data-iconpos="notext" data-inline="true" data-rel="popup" data-role="button">View Code</a></div>
+         <div id="view3" class="view" data-fov="40" data-z="-500" data-width="550" data-height="400">
+            <div id="v3s1" class="red-sprite" data-x="-150" data-rotate-y="-75">1st Sprite Div</div>
+            <div id="v3s2" class="red-sprite" data-x="0">2nd Sprite Div</div>
+            <div id="v3s3" class="red-sprite" data-x="150" data-rotate-y="75">3rd Sprite Div</div>
+        </div>
+        <div data-role="popup" class="ui-corner-all" id="viewcode3">
+<pre class="prettyprint">
+&lt;div id="view3" class="view" data-fov="40" data-z="-500" data-width="550" data-height="400"&gt;
+    &lt;div id="v3s1" class="red-sprite" data-x="-200" data-rotate-y="-75"&gt;1st Sprite Div&lt;/div&gt;
+    &lt;div id="v3s2" class="red-sprite" data-x="0"&gt;2nd Sprite Div&lt;/div&gt;
+    &lt;div id="v3s3" class="red-sprite" data-x="200" data-rotate-y="75"&gt;3rd Sprite Div&lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+	$("#view3").world();
+&lt;/script&gt;
+</pre>
+        </div>
+        </div>
+        
+        
+        <div class="sample">
+         <div class="info">4 - Placing camera</div><div class="codelink"><a href="#viewcode4" data-mini="true" data-icon="info" data-iconpos="notext" data-inline="true" data-rel="popup" data-role="button">View Code</a></div>
+         <div id="view4" class="view" data-fov="60" data-x="400" data-y="200" data-z="-500" data-rotate-x="35" data-rotate-y="-50" data-width="240" data-height="160">
+            <div id="v4s1" class="red-sprite" data-x="-150" data-z="-150" data-rotate-y="-75">1st Sprite Div</div>
+            <div id="v4s2" class="green-sprite" data-x="0">2nd Sprite Div</div>
+            <div id="v4s3" class="blue-sprite" data-x="150" data-z="-150" data-rotate-y="75">3rd Sprite Div</div>
+            <div id="v4s4" class="yellow-sprite" data-x="300" data-z="-300">4th Sprite Div</div>
+        </div>
+       
+        <div data-role="popup" class="ui-corner-all" id="viewcode4">
+<pre class="prettyprint">
+&lt;div id="view4" class="view" data-fov="60" data-x="400" data-y="200" data-z="-500" data-rotate-x="35" data-rotate-y="-50" data-width="240" data-height="160"&gt;
+    &lt;div id="v4s1" class="red-sprite" data-x="-150" data-z="-150" data-rotate-y="-75"&gt;1st Sprite Div&lt;/div&gt;
+    &lt;div id="v4s2" class="green-sprite" data-x="0"&gt;2nd Sprite Div&lt;/div&gt;
+    &lt;div id="v4s3" class="blue-sprite" data-x="150" data-z="-150" data-rotate-y="75"&gt;3rd Sprite Div&lt;/div&gt;
+    &lt;div id="v4s4" class="yellow-sprite" data-x="300" data-z="-300"&gt;4th Sprite Div&lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+	$("#view4").world();
+&lt;/script&gt;
+</pre>
+        </div>
+        </div>
+        
+        
+         <div class="sample">
+         <div class="info">5 - Click on the view to rotate</div><div class="codelink"><a href="#viewcode5" data-mini="true" data-icon="info" data-iconpos="notext" data-inline="true" data-rel="popup" data-role="button">View Code</a></div>
+         <div id="view5" class="view" data-fov="50" data-y="100" data-z="-350" data-width="800" data-height="600">
+            <div id="v5s1" class="blue-sprite" data-x="-150" data-z="-150" data-rotate-x="45" data-rotate-y="-90">1st Sprite Div</div>
+            <div id="v5s2" class="blue-sprite" data-x="0" data-rotate-x="45" >2nd Sprite Div</div>
+            <div id="v5s3" class="blue-sprite" data-x="150" data-z="-150" data-rotate-x="45" data-rotate-y="90">3rd Sprite Div</div>
+            <div id="v5s4" class="ground-sprite" data-y="-300" data-rotate-x="90" data-scale-x="10" data-scale-y="10"></div>
+        </div>
+         <script>
+		 	var lpx, lpy;
+			
+			$("#view5").on("vmousedown", function(e) 
+			{
+				lpx = e.pageX;
+				lpy = e.pageY;
+				
+				$(document).on("vmousemove", mouse_move);
+				$(document).on("vmouseup", mouse_up);
+				
+				e.preventDefault();
+			});
+			
+			function mouse_move (e) 
+			{
+				// Rotate camera on local axis
+				$("#view5").world("set", {localRotateX: e.pageY - lpy, localRotateY: e.pageX - lpx});
+				
+				// Reset Z rotation to zero
+        		$("#view5").world("set", {rotateZ:0});
+				
+				lpx = e.pageX;
+				lpy = e.pageY;
+			}
+			
+			function mouse_up (e) 
+			{
+				$(document).off("vmousemove", mouse_move);
+				$(document).off("vmouseup", mouse_up);
+			}
+			
+		</script>
+        <div data-role="popup" class="ui-corner-all" id="viewcode5">
+<pre class="prettyprint">
+&lt;div id="view5" class="view" data-fov="50" data-y="100" data-z="-350" data-width="800" data-height="600"&gt;
+    &lt;div id="v5s1" class="blue-sprite" data-x="-150" data-z="-150" data-rotate-x="45" data-rotate-y="-90"&gt;1st Sprite Div&lt;/div&gt;
+    &lt;div id="v5s2" class="blue-sprite" data-x="0" data-rotate-x="45"&gt;2nd Sprite Div&lt;/div&gt;
+    &lt;div id="v5s3" class="blue-sprite" data-x="150" data-z="-150" data-rotate-x="45" data-rotate-y="90"&gt;3rd Sprite Div&lt;/div&gt;
+    &lt;div id="v5s4" class="ground-sprite" data-y="-300" data-rotate-x="90" data-scale-x="10" data-scale-y="10"&gt;4th Sprite Div&lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+	$("#view5").world();
+    
+	var lpx, lpy;
+    		
+    $("#view5").on("vmousedown", function(e) 
+    {
+        lpx = e.pageX;
+        lpy = e.pageY;
+        
+        $(document).on("vmousemove", mouse_move);
+        $(document).on("vmouseup", mouse_up);
+        
+        e.preventDefault();
+    });
+    
+    function mouse_move (e) 
+    {
+        // Rotate camera on local axis
+        $("#view5").world("set", {localRotateX: e.pageY - lpy, localRotateY: e.pageX - lpx});
+        
+        // Reset Z rotation to zero
+        $("#view5").world("set", {rotateZ:0});
+        
+        lpx = e.pageX;
+        lpy = e.pageY;
+    }
+    
+    function mouse_up (e) 
+    {
+        $(document).off("vmousemove", mouse_move);
+        $(document).off("vmouseup", mouse_up);
+    }
+&lt;/script&gt;
+</pre>
+        </div>
+        </div>
+        
+        
+        
+        
+        <div class="sample">
+         <div class="info">6 - Click on the menu to navigate
+             <div class="menu">
+            <a href="#" onclick="gotoSprite('v6s1');">Sprite 1</a>
+            <a href="#" onclick="gotoSprite('v6s2');">Sprite 2</a>
+            <a href="#" onclick="gotoSprite('v6s3');">Sprite 3</a>
+            <a href="#" onclick="gotoSprite('v6s4');">Sprite 4</a>
+            </div>
+        </div>
+         <div class="codelink"><a href="#viewcode6" data-mini="true" data-icon="info" data-iconpos="notext" data-inline="true" data-rel="popup" data-role="button">View Code</a></div>
+         <div id="view6" class="view" data-fov="60" data-z="-300" data-width="800" data-height="600">
+            <div id="v6s1" class="red-sprite" data-x="-150" data-z="-150" data-rotate-x="45" data-rotate-y="-75" data-rotate-z="25">1st Sprite Div</div>
+            <div id="v6s2" class="yellow-sprite" data-x="0" data-rotate-x="45">2nd Sprite Div</div>
+            <div id="v6s3" class="green-sprite" data-x="150" data-z="-150" data-rotate-y="75" data-rotate-z="-25">3rd Sprite Div</div>
+            <div id="v6s4" class="blue-sprite" data-y="-100" data-z="-50" data-rotate-x="90">4th Sprite Div</div>
+        </div>
+        
+         <script>
+		 	function gotoSprite( sp ) {
+				// Animate camera matrix with css transition
+				$("#view6").world("matrixTransition", ".9s ease-in-out");
+				
+				// Get Sprite Transform
+				var transform = $("#"+sp).world('get',{rotateX:0,rotateY:0,rotateZ:0,x:0,y:0,z:0});
+				
+				// Copy Sprite Transform to Camera
+				$("#view6").world('set', transform);
+				// Move Camera Backwards
+				$("#view6").world('set',{moveZ:-250});
+			}
+		</script>
+        <div data-role="popup" class="ui-corner-all" id="viewcode6">
+<pre class="prettyprint">
+&lt;a href="#" onclick="gotoSprite('v6s1');"&gt;Sprite 1&lt;/a&gt;
+&lt;a href="#" onclick="gotoSprite('v6s2');"&gt;Sprite 2&lt;/a&gt;
+&lt;a href="#" onclick="gotoSprite('v6s3');"&gt;Sprite 3&lt;/a&gt;
+&lt;a href="#" onclick="gotoSprite('v6s4');"&gt;Sprite 4&lt;/a&gt;
+
+&lt;div id="view6" class="view" data-fov="60" data-z="-300" data-width="800" data-height="600"&gt;
+    &lt;div id="v6s1" class="red-sprite" data-x="-150" data-z="-150" data-rotate-x="45" data-rotate-y="-75" data-rotate-z="25"&gt;1st Sprite Div&lt;/div&gt;
+    &lt;div id="v6s2" class="yellow-sprite" data-x="0" data-rotate-x="45"&gt;2nd Sprite Div&lt;/div&gt;
+    &lt;div id="v6s3" class="green-sprite" data-x="150" data-z="-150" data-rotate-y="75" data-rotate-z="-25"&gt;3rd Sprite Div&lt;/div&gt;
+    &lt;div id="v6s4" class="blue-sprite" data-y="-100" data-z="-50" data-rotate-x="90"&gt;4th Sprite Div&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    // Create View
+    $("#view6").world();
+        
+    // Animate camera matrix with css transition
+    $("#view6").world("matrixTransition", ".9s ease-in-out");
+    
+    function gotoSprite( sp ) 
+    {
+        // Get Sprite Transform
+        var transform = $("#"+sp).world('get',{rotateX:0,rotateY:0,rotateZ:0,x:0,y:0,z:0});
+        
+        // Copy Sprite Transform to Camera
+        $("#view6").world('set', transform);
+        
+        // Move Camera Backwards
+        $("#view6").world('set',{moveZ:-250});
+    }
+&lt;/script&gt;
+</pre>
+        </div>
+        </div>
+        
+        
+        
+        
+        
+        <div class="sample">
+         <div class="info">7 - General information</div><div class="codelink"><a href="#viewcode7" data-mini="true" data-icon="info" data-iconpos="notext" data-inline="true" data-rel="popup" data-role="button">View Code</a></div>
+         <div id="view7" class="view" data-fov="89" data-z="-150" data-rz="10" data-width="550" data-height="400">
+           
+        </div>
+        <div id="cont">
+        	<div id="cs1" data-x="-200" data-z="0">Dynamic Sprite 1</div>
+            <div id="cs2" data-x="-200" data-z="100">Dynamic Sprite 2</div>
+             <div id="cs3" data-x="-200" data-z="200">Dynamic Sprite 3</div>
+        </div>
+        <script type="text/javascript">
+			// create a new sprite
+			function startView7 () {
+					
+				var new_div = document.createElement("div");
+				new_div.id = "new-sprite";
+				new_div.className = "red-sprite";
+				new_div.innerHTML = '<p><b>support:</b> ' + $(document).world("support") + '</p>' + 
+								 	'<p><b>browserPrefix</b>: "'+ $(document).world("browserPrefix") + '"</p>' + 
+								 	'<p><b>cssPrefix</b>: "'+ $(document).world("cssPrefix") + '"</p>';
+				
+				new_div.setAttribute("data-rotate-y", 30);
+				
+				// add sprite to view
+				$("#view7").world( "add", new_div );
+				
+				$("#view7").world( "addElements", $("#cs1,#cs2,#cs3") );
+			}
+		</script>
+        <div data-role="popup" class="ui-corner-all" id="viewcode7">
+<pre class="prettyprint">
+&lt;div id="view7" class="view" data-fov="89" data-z="-150" data-width="550" data-height="400"&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    $("#view7").world();
+    
+    var new_div = document.createElement("div");
+    new_div.id = "new-sprite";
+    new_div.className = "red-sprite";
+    new_div.innerHTML = '&lt;p&gt;support: "' + $(document).world("support") + '"&lt;/p&gt;' + 
+                        '&lt;p&gt;browserPrefix: "'+ $(document).world("browserPrefix") + '"&lt;/p&gt;' + 
+                        '&lt;p&gt;cssPrefix: "'+ $(document).world("cssPrefix") + '"&lt;/p&gt;' 
+                         );
+                         
+    new_div.setAttribute("data-rotate-y", 30);
+    
+    // add sprite to view
+    $("#view7").world( "add", new_div );
+&lt;/script&gt;
+</pre>
+        </div>
+        </div>
+        
+        
+        
+    </div>
+
+</body>
+</html>

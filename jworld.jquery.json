@@ -1,0 +1,37 @@
+{
+	"name": "jworld",
+	"title": "jQuery jWorld",
+	"description": "3D for jQuery",
+	"keywords": [
+		"3D",
+		"OpenGL",
+		"transforms",
+		"CSS3",
+		"animation",
+		"html5",
+		"jquery"
+	],
+	"version": "0.9.7",
+	"author": {
+		"name": "Daniel Reitterer"
+	},
+	"maintainers": [
+		{
+			"name": "Daniel Reitterer",
+			"email": "dr101@gmx.at"
+		}
+	],
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "https://github.com/jquery/jquery-color/blob/2.1.2/MIT-LICENSE.txt"
+		}
+	],
+	"bugs": "https://github.com/3key/jquery.jword/issues",
+	"homepage": "https://github.com/3key/jquery.jworld",
+	"docs": "https://github.com/3key/jquery.jworld",
+	"download": "https://github.com/3key/jquery.jworld/archive/master.zip",
+	"dependencies": {
+		"jquery": ">=1.5"
+	}
+}
