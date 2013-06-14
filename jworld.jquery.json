@@ -11,7 +11,7 @@
 		"html5",
 		"jquery"
 	],
-	"version": "0.9.7",
+	"version": "0.9.8",
 	"author": {
 		"name": "Daniel Reitterer"
 	},
@@ -27,10 +27,10 @@
 			"url": "https://github.com/jquery/jquery-color/blob/2.1.2/MIT-LICENSE.txt"
 		}
 	],
-	"bugs": "https://github.com/3key/jquery.jword/issues",
-	"homepage": "https://github.com/3key/jquery.jworld",
-	"docs": "https://github.com/3key/jquery.jworld",
-	"download": "https://github.com/3key/jquery.jworld/archive/master.zip",
+	"bugs": "https://github.com/3key/jworld/issues",
+	"homepage": "https://github.com/3key/jworld",
+	"docs": "https://github.com/3key/jworld",
+	"download": "https://github.com/3key/jworld/archive/master.zip",
 	"dependencies": {
 		"jquery": ">=1.5"
 	}
