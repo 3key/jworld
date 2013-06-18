@@ -3,7 +3,7 @@ jworld - 3D for jQuery
 
 * @name jquery.jworld.js
 * @author Daniel Reitterer (http://3key.at/jworld)
-* @version 0.9.8
+* @version 0.9.10
 * @codename: Amethyst
 * @category jQuery plugin
 * @license MIT license
@@ -22,6 +22,7 @@ Modes
 * browserPrefix      | Prefix for Javascript
 * css                | Set special css with correct browser prefix like perspective, transform, transition etc.
 * cssPrefix          | Prefix for css
+* frameRate          | frameRate for internal rendering update, default: 50 fps. The frameRate does not change the frameRate for css-transitions
 * get                | Get value
 * matrixTransition   | Set css transition property for css transform
 * remove             | Remove a div from view
