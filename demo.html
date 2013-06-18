@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <title>Untitled Document</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.js"></script>
-<script type="text/javascript" src="jworld-0.9.8.js"></script>
+<script type="text/javascript" src="jworld-0.9.10.min.js"></script>
 
 <script type="text/javascript">
 	
 	function resizeWin (e) 
 	{
 		// Update the camera size
-		$("#view").world("set", {width:window.innerWidth-16, height:window.innerHeight-16});
+		$("#view").world({width:window.innerWidth-16, height:window.innerHeight-16});
 	}
 	
 	$(document).ready(function(e) 
@@ -37,9 +37,15 @@
 			}
 		});
 		
-		// Animate sprites with css transform
-		$(".sprite").world("matrixTransition", "1s ease-in-out");
+		// Hide backfacing sprites
 		$(".sprite").css("backface-visibility", "hidden");
+		
+		// Animate sprites with transform transition
+		// For IE we have to do set transition a little 
+		// bit later to skip initial transiton animation
+		setTimeout( function () {
+			$(".sprite").world("matrixTransition", "1s ease-in-out");
+		}, 200);
 		
 	});
 	
@@ -51,7 +57,7 @@
 	.view { background:#ac3; }
 	.sprite { width: 200px; height: 100px; background:#9f0; border: 4px solid #fff; border-radius: 25px; opacity:.55; padding: 20px; color:#000; font-size: 50px; text-align:center;  }
 	.blue-sprite { background:#3cf;  }
-	.sprite-back { opacity:0.9; background:#000; }
+	.sprite-back { opacity:0.75; background:#fff; }
 </style>
 </head>
 
@@ -60,14 +66,14 @@
 	<!-- Here is the view container with some sprites -->
     <div id="view" class="view" data-fov="60" data-y="150" data-z="-500" data-rotate-x="15">
         <div id="sprite1" class="sprite" data-x="-150" data-rotate-y="-45">#1</div>
-        <div id="sprite1-back" class="sprite sprite-back" data-x="-150" data-rotate-y="-45" data-scale-z="-1">#1</div>
+        <div id="sprite1-back" class="sprite sprite-back" data-x="-150" data-rotate-y="-45" data-scale-z="-1" data-scale-x="-1"></div>
         <div id="sprite2" class="sprite blue-sprite">#2</div>
-        <div id="sprite2-back" class="sprite sprite-back" data-scale-z="-1">#1</div>
+        <div id="sprite2-back" class="sprite sprite-back" data-scale-z="-1" data-scale-x="-1"></div>
         <div id="sprite3" class="sprite" data-x="150" data-rotate-y="45">#3</div>
-        <div id="sprite3-back" class="sprite sprite-back" data-x="150" data-rotate-y="45" data-scale-z="-1">#1</div>
+        <div id="sprite3-back" class="sprite sprite-back" data-x="150" data-rotate-y="45" data-scale-z="-1" data-scale-x="-1"></div>
     </div>
     
     <div class="title">JWorld plugin for jQuery ... click on the sprites</div>
-    <div class="info"><a href="http://3key.at/jworld">View more demos</a></div>
+    <div class="info"><a href="http://3key.at/jworld">more demos</a></div>
 </body>
 </html>
