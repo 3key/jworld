@@ -2,9 +2,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Untitled Document</title>
+<title>jworld 0.9.13 demo</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.js"></script>
-<script type="text/javascript" src="jworld-0.9.10.min.js"></script>
+<script type="text/javascript" src="jworld-0.9.13.js"></script>
+<script type="text/javascript" src="jworld.degrade.html4-0.1.2.js"></script>
 
 <script type="text/javascript">
 	
@@ -27,18 +28,20 @@
 			
 			if($(this).hasClass("sprite-back")) 
 			{
+				// Rotate clicked front and back sprite + 180 degrees (by offset)
 				$(this).world({offsetRotateY: 180});
 				$("#"+this.id.substring(0,7)).world({offsetRotateY: 180});
 			}
 			else
 			{
+				// Rotate clicked front and back sprite + 180 degrees (by offset)
 				$(this).world( {offsetRotateY: 180});
 				$("#"+this.id+"-back").world({offsetRotateY: 180});
 			}
 		});
 		
 		// Hide backfacing sprites
-		$(".sprite").css("backface-visibility", "hidden");
+		$(".sprite").world("doubleSided", false);
 		
 		// Animate sprites with transform transition
 		// For IE we have to do set transition a little 
@@ -64,13 +67,13 @@
 <body>
 	
 	<!-- Here is the view container with some sprites -->
-    <div id="view" class="view" data-fov="60" data-y="150" data-z="-500" data-rotate-x="15">
+    <div id="view" class="view" data-fov="55" data-y="150" data-z="-500" data-rotate-x="15">
         <div id="sprite1" class="sprite" data-x="-150" data-rotate-y="-45">#1</div>
-        <div id="sprite1-back" class="sprite sprite-back" data-x="-150" data-rotate-y="-45" data-scale-z="-1" data-scale-x="-1"></div>
+        <div id="sprite1-back" class="sprite sprite-back" data-x="-150" data-rotate-y="-45" data-scale-z="-1" data-scale-x="-1">Hello</div>
         <div id="sprite2" class="sprite blue-sprite">#2</div>
-        <div id="sprite2-back" class="sprite sprite-back" data-scale-z="-1" data-scale-x="-1"></div>
+        <div id="sprite2-back" class="sprite sprite-back" data-scale-z="-1" data-scale-x="-1">J</div>
         <div id="sprite3" class="sprite" data-x="150" data-rotate-y="45">#3</div>
-        <div id="sprite3-back" class="sprite sprite-back" data-x="150" data-rotate-y="45" data-scale-z="-1" data-scale-x="-1"></div>
+        <div id="sprite3-back" class="sprite sprite-back" data-x="150" data-rotate-y="45" data-scale-z="-1" data-scale-x="-1">World</div>
     </div>
     
     <div class="title">JWorld plugin for jQuery ... click on the sprites</div>

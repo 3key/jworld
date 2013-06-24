@@ -1,4 +1,6 @@
+
 /**
+*
 *
 *________________________________________________________________________________________________
 *______/\\\\\\\\\\\__/\\\______________/\\\______________________________/\\\\\\____________/\\\__        
@@ -11,7 +13,7 @@
 *       _\//\\\\\\\\\__________\//\\\__\//\\\_______\///\\\\\/___\/\\\__________/\\\\\\\\\_\//\\\\\\\/\\_ 
 *        __\/////////____________\///____\///__________\/////_____\///__________\/////////___\///////\//__
 *         _________________________________________________________________________________________________
-*           copyright (c) 2013, Daniel Reitterer, http://3key.at/jworld (contact: dr101 [at] gmx [.] at)
+*              http://3key.at/jworld   http://github.com/3key/jworld   contact: dr101 [at] gmx [.] at
 *           _________________________________________________________________________________________________
 *                                                     Version 1.0
 *					                      _   _               _   
@@ -21,10 +23,12 @@
 *					 \__,_|_| |_| |_|\___|\__|_| |_|\__, |___/\__|
 *					                                |___/         
 *
+*
+*
 **
 * @name jquery.jworld.js
 * @author Daniel Reitterer (http://3key.at/jworld)
-* @version 0.9.10
+* @version 0.9.13
 * @codename: Amethyst
 * @date june 2013
 * @category jQuery plugin
@@ -43,12 +47,16 @@
 * ====================================================
 * add                | Add a div to the view
 * addElements        | Add Array of sprite divs, the children of a div, or a jquery object to a view
+* animation          | Set css keyframe animations
 * browserPrefix      | Prefix for Javascript
-* css                | Set special css with correct browser prefix like perspective, transform, transition etc.
+* container          | Returns the html element for views and sprites
+* css                | Set special css üroperties with correct browser prefix like perspective, transform, transition etc.
 * cssPrefix          | Prefix for css
-* frameRate          | frameRate for internal rendering update, default: 50 fps. The frameRate does not change the frameRate for css-transitions
+* frameRate          | frameRate for internal rendering update, default: 50 fps. The frameRate does not change the frameRate for css-transitions and animations
 * get                | Get value
+* matrixChannel      | Create a new keyframe channel for css animation, arguments: channel-name, optional-object3d, frame1, ... frameN
 * matrixTransition   | Set css transition property for css transform
+* object3d           | Returns the core Object3d object for views and sprites
 * remove             | Remove a div from view
 * removeElements     | Remove a list of sprite divs from the view
 * reset              | Reset the transform of the item
@@ -83,6 +91,9 @@
 * Num  | scaleX          | Object Scale
 *      | scaleY          | 
 *      | scaleZ          |
+* Dyna | pivotX          | Registration point for sprites, string, left, center, right or number
+*      | pivotY          | Registration point for sprites, string, top, middle, center, bottom or number
+*      | pivotZ          | Registration point for sprites, string, center or number
 * Num  | width           | Camera width
 * Num  | height          | Camera height
 * Num  | fov             | Camera field of view in degree
@@ -132,17 +143,20 @@
 *	$(elements).world("update"); // Redraw
 *	$(elements).world("updateSize"); // Update after size changed
 *	$(elements).world("reset"); // Reset transform
+*	$(elements).world("doubleSided", false); // hide backfacing sprites
 *	$(elements).world("matrixTransition", "1s ease-in"); // set css transitions
 *	$(elements).world("css", "transition", "opacity 2s ease-in"); // set css property with prefixed name
 *
 **
 * Supported Browser's
 *
-* Safari 5+ (full support)
-* Chrome (full support)
-* Mozilla
+* Safari 4+
+* Chrome 12+
+* Mozilla 10+
 * IE 10+ 
-* No support in opera
+* ios 3.2+
+* opera 15+
+* see http://caniuse.com/transforms3d
 *
 **
 * Known Problems
@@ -174,17 +188,16 @@
 	$.fn.world = function(mode, av, rv) 
 	{
         var t = this;
-		var L = this.length;
+		var L = t.length;
         if(L === 0) return false; // Nothing to do
 		
 		if(typeof mode !== "string") 
 		{
 			// No string mode specified
-			if(typeof av === "object") {
+			if(typeof av !== "undefined") {
 				 rv = av;
 			}
-			av = mode;
-			if(typeof av === "undefined") av = {};
+			av = mode || {};
 			
 			// default mode
 			mode = "set";
@@ -213,11 +226,8 @@
 					$c.items[d.id] = obj;
 				}
 				
-				var val;
-				
 				for(var n in av) 
 				{
-					val = av[n];
 					tp = typeof obj[n];
 					
 					if( tp === "undefined" ){
@@ -225,15 +235,15 @@
 						
 						if(tp !== "undefined" ) {
 							if(tp === "function") {
-								obj["set"+n](val);
+								obj["set"+n](av[n]);
 							}else{
-								obj["set"+n] = val;
+								obj["set"+n] = av[n];
 							}
 						}
 					}else if(tp === "function") {
-						obj[n](val);
+						obj[n](av[n]);
 					}else{
-						obj[n] = val;
+						obj[n] = av[n];
 					}
 				}
 				
@@ -243,7 +253,7 @@
 		}
 		else if(mode === "get") 
 		 {
-			var el = $c.items[this[0].id];
+			var el = $c.items[this[0].id] || null;
 			if(el) 
 			{
 				var ret = typeof rv === "object" ? rv : av;
@@ -317,6 +327,77 @@
 					
 				});
 			}
+		}else if(mode == "animation") {
+			
+			return this.each( function(i,d) 
+			{
+				var obj = $c.items[d.id] || null;
+				
+				if(obj) 
+				{
+					if(obj instanceof $c.View3d) {
+						$c.cssProp(obj.container, "animation", av);
+					}else{
+						$c.cssProp(d, "animation", av);
+					}
+				}
+				
+			});
+			
+		}else if(mode == "matrixChannel") {
+			
+			// create css keyframe channel
+			var st = '<style type="text/css">\n@'+$c.pfxCss+"keyframes " + av + " {\n";
+			var tr, n, startid = 2, obj = null;
+			
+			if(arguments.length > 2) {
+				obj = $c.items[ typeof arguments[2] === "string" ? arguments[2] : arguments[2].id] || null;
+				if(obj) {
+					startid++;	
+				}
+			}
+			
+			for(var i=startid; i<arguments.length; i++) {
+				
+				tr = arguments[i];
+				if(typeof tr !== "object") {
+					// zero transform...
+				}else{
+					
+					st += tr.frame + " { ";
+					
+					for(n in tr) {
+						if(n == "frame" || n == "x" || n=="y" || n=="z" || n=="rotateX" || n=="rotateY" || n=="rotateZ" || n=="scaleX" || n=="scaleY" || n=="scaleZ") continue;
+						st += n + ":" + tr[n] + "; ";
+					}
+					if(obj) {
+						st += $c.pfxCss +"transform: translate3d("+ (typeof tr.x == "number" ? tr.x : obj.getx())+"px,"+(typeof tr.y == "number" ? tr.y : obj.gety())+"px,"+(typeof tr.z == "number" ? tr.z : obj.getz())+"px) rotateY("+(typeof tr.rotateY == "number" ? tr.rotateY : obj.getrotateY())+"deg) rotateX("+(typeof tr.rotateX == "number" ? tr.rotateX : obj.getrotateX())+"deg) rotateZ("+(typeof tr.rotateZ == "number" ? tr.rotateZ : obj.getrotateZ())+"deg) scale3d("+(typeof tr.scaleX == "number" ? tr.scaleX : obj.getscaleX())+","+(typeof tr.scaleY == "number" ? -tr.scaleY : -obj.getscaleY())+","+(typeof tr.scaleZ == "number" ? -tr.scaleZ : -obj.getscaleZ())+"); ";
+					}else{
+						st += $c.pfxCss +"transform: translate3d("+ (tr.x || 0)+"px,"+(tr.y||0)+"px,"+(tr.z||0)+"px) rotateY("+(tr.rotateY||0)+"deg) rotateX("+(tr.rotateX||0)+"deg) rotateZ("+(tr.rotateZ||0)+"deg) scale3d("+(tr.scaleX||1)+","+((tr.scaleY||1)*-1)+","+((tr.scaleZ||1)*-1)+"); ";
+					}
+				}
+				
+				st += " } \n";
+			}
+			st += " } \n";
+			st += '</style>';
+			
+			$("head").append(st);
+			return this;
+		}else if(mode === "object3d") { 
+			return $c.items[this[0].id] || null;
+		}else if(mode === "container") { 
+			var obj = $c.items[this[0].id] || null;
+			if( obj ) {
+				if(obj instanceof $c.View3d) {
+					return obj.container;	
+				}else{
+					return obj.div;
+				}
+			}else{
+				return null;	
+			}
+			
 		}else if(mode == "browserPrefix") {
 			return $c.pfx;
 		}else if(mode == "cssPrefix") {
@@ -338,7 +419,7 @@
 			if(at === "undefined") 
 			{
 				// Get propertyof of first jquery item
-				var obj = $c.items[this[0].id];
+				var obj = $c.items[this[0].id] || null;
 				
 				if(obj) 
 				{
@@ -364,44 +445,46 @@
 			}else{
 				
 				// try set mode as value
-				
-				var obj = $c.items[this[0].id];
-					
-				if(obj) 
+				return this.each( function(i,d) 
 				{
-					tp = typeof obj[mode];
-					if(tp !== "undefined") 
+					var obj = $c.items[d.id] || null;
+					
+					if(obj) 
 					{
-						if(tp === "function") {
-							try {
-								obj[mode](av);
-							}catch(e)  {
-								var tm;
-							}
-						}else{
-							if(typeof obj[mode] !== "undefined") {
-								obj[mode] = av;
-							}
-						}
-					}else{
-						tp = typeof obj["set"+mode];
-						if(tp !== "undefined") {
-							if(tp==="function") {
+						tp = typeof obj[mode];
+						if(tp !== "undefined") 
+						{
+							if(tp === "function") {
 								try {
-									obj["set"+mode](av);
+									obj[mode](av);
 								}catch(e)  {
 									var tm;
 								}
 							}else{
-								if(typeof obj["set"+mode] !== "undefined") {
-									obj["set"+mode] = av;
+								if(typeof obj[mode] !== "undefined") {
+									obj[mode] = av;
+								}
+							}
+						}else{
+							tp = typeof obj["set"+mode];
+							if(tp !== "undefined") {
+								if(tp==="function") {
+									try {
+										obj["set"+mode](av);
+									}catch(e)  {
+										var tm;
+									}
+								}else{
+									if(typeof obj["set"+mode] !== "undefined") {
+										obj["set"+mode] = av;
+									}
 								}
 							}
 						}
-					}
-					if(obj.invalidSize) obj.updateSize();
-					
-				} // if obj	
+						if(obj.invalidSize) obj.updateSize();
+						
+					} // if obj	
+				});
 			}
 		
 			
@@ -422,7 +505,8 @@ ________/\\\\\\\\\____________________________________________
         _______\/////////_____\/////_____\///____________\//////////__
 */
 	
-	$.fn.world.core = {
+	$.fn.world.core = 
+	{
 		items:{},
 		frameRate:50,
 		iid:null,
@@ -433,7 +517,7 @@ ________/\\\\\\\\\____________________________________________
 		cssProp :function(d,n,v) 
 		{
 			var pf = $c.pfx;
-			if(d) d.style[pf+(pf==""?n:n.charAt(0).toUpperCase() + n.substring(1))] = v;
+			d.style[pf+(pf==""?n:n.charAt(0).toUpperCase() + n.substring(1))] = v;
 		},
 		setInvalid :function(obj) {
 			
@@ -451,13 +535,29 @@ ________/\\\\\\\\\____________________________________________
 			
 			$c.tu.push(obj);
 		},
+		cancelUpdate : function(obj) {
+			for(var i=0; i<$c.tu.length; i++) {
+				if($c.tu[i] === obj) {
+					$c.tu.splice(i,1);
+					return;	
+				}
+			}
+		},
 		interval: function () {
 			if($c.tu.length > 0) 
 			{
-				var t = $c.tu;
-				for(var i=t.length-1; i>=0; i--) 
+				// Update views first
+				
+				var t = $c.tu, i;
+				
+				for(i=t.length-1; i>=0; i--) 
 				{
-					t[i].update();
+					if(t[i] instanceof $c.View3d) t[i].update();
+				}
+				
+				for(i=t.length-1; i>=0; i--) 
+				{
+					if(t[i] instanceof $c.Sprite3d) t[i].update();
 				}
 				$c.tu = [];
 			}
@@ -480,7 +580,7 @@ ________/\\\\\\\\\____________________________________________
 				
 				if(width == 0 || width == null) width = div.getAttribute("data-width") || div.width || div.offsetWidth || 800;	
 				if(height == 0 || height == null) height = div.getAttribute("data-height") || div.height || div.offsetHeight || 600;	
-				if(fov == 0 || fov == null) fov = (Number(div.getAttribute("data-fov")) || 55)*Math.PI/180;
+				if(fov == 0 || fov == null) fov = Number(div.getAttribute("data-fov")) || 55;
 				
 				t._width = width;
 				t._height = height;
@@ -602,19 +702,19 @@ ________/\\\\\\\\\____________________________________________
 			}
 			t.setortho = function (enable) {
 				this._ortho = Boolean(enable);
-				this.setfov(this._fov);
+				this.setfov(this.getfov());
 			}
 			t.getortho = function () {
 				return this._ortho;	
 			}
 			t._fov = 0;
-			t.getfov = function () { return this._fov; };
+			t.getfov = function () { return this._fov/Math.PI*180; };
 			t.setfov = function (r) {
-				this._fov = r;
+				this._fov = r == 0 ? Math.PI : r*Math.PI/180;
 				this.setperspective( this.getFocalLength() );
 				$c.setInvalid(this);
 			}
-			t.setFocalLength = function (f) { this._fov = Math.atan2(this._height/2,f)*2 ; };
+			t.setFocalLength = function (f) { this._fov = Math.atan2(this._height/2,f)*2; };
 			
 			t.getFocalLength = function () {
 				var f = this._fov/2;
@@ -624,13 +724,13 @@ ________/\\\\\\\\\____________________________________________
 			t.setperspective = function (p) {
 				this._perspective = p;
 				this.setFocalLength( p );
-				if(!$c.isIE) {
+				if($c.support && !$c.isIE) {
 					if(this._ortho) {
-						if($c.support) $c.cssProp(this.wrap2,"perspective","none");
+						$c.cssProp(this.wrap2,"perspective","none");
 					}else{
-						if($c.support) $c.cssProp(this.wrap2,"perspective",p+ ($c.pfx == "Webkit" ? "":"px"));
+						$c.cssProp(this.wrap2,"perspective",p+ ($c.pfx == "Webkit" ? "":"px"));
 					}
-					this.update();
+					$c.setInvalid(this);
 				}
 			}
 			
@@ -661,10 +761,10 @@ ________/\\\\\\\\\____________________________________________
 					else
 					{
 						// IE needs to update all sprites with calculated camera matrix
-						// pretty slow currently
 						
 						for(var i=0; i<t.sprites.length; i++) {
 							t.sprites[i].update();
+							$c.cancelUpdate(t.sprites[i]);
 						}
 						
 						t.sprites.sort( $c.sortFunc );
@@ -672,33 +772,44 @@ ________/\\\\\\\\\____________________________________________
 							t.sprites[i].div.style.zIndex = t.startDepth + i;
 						}
 					}
+					
+				}else{
+					
+					// No CSS3 3D Transform available
+					
+					if( typeof $c.degrade === "object") {
+						
+						$c.degrade.updateView(this);
+					}
+					
 				}
 			}
 			t.updateSize = function() {
-				var st;
 				t.invalidSize = false;
-				if($c.support) {
-					st = this.wrap1.style;
-					st.left = Math.floor(this._width/2)+"px";
-					st.top = Math.floor(this._height/2)+"px";
-				}
+				var st = this.wrap1.style;
+				st.left = Math.floor(this._width/2)+"px";
+				st.top = Math.floor(this._height/2)+"px";
 				st = this.cDiv.style;
 				st.width = this._width+"px";
 				st.height = this._height+"px";
 				//st.clip = "rect(0px "+this._width+"px "+this._height+"px 0px)";
+				this.setfov(this.getfov());
 				
-				this.setfov(this._fov);
+				if(!$c.support && typeof $c.degrade === "object") {
+					$c.degrade.updateSizeView(this);	
+				}
 			}
-			t.newSprite = function (div) {
+			t.newSprite = function (div) 
+			{
 				var sp = new $c.Sprite3d();
 				sp.view = this;
 				sp.setDiv(div);
 				this.sprites.push(sp);
 				$c.items[div.id] = sp;
-				sp.updateSize();
 				$c.setupDataTransform(div,sp);
-				sp.update();
+				$c.setInvalid(sp);
 				this.container.appendChild(div);
+				sp.updateSize();
 				return sp;
 			}
 			t.createView(div, width, height, fov, noSetup);
@@ -759,6 +870,21 @@ ________/\\\\\\\\\____________________________________________
 							obj.setscaleZ(val);
 							break;
 							
+						/* Pivot Point */
+						case "data-px":
+						case "data-pivot-x":
+							obj.setpivotX(sval);
+							break;
+						case "data-py":
+						case "data-pivot-y":
+							obj.setpivotY(sval);
+							break;
+						case "data-pz":
+						case "data-pivot-z":
+							obj.setpivotZ(sval);
+							break;
+							
+							
 						/* Move Methods */
 						case "data-mx":
 						case "data-move-x":
@@ -786,10 +912,16 @@ ________/\\\\\\\\\____________________________________________
 						case "data-local-rotate-z":
 							obj.localRotateZ( val );
 							break;
+						
+						/* Sprite setup */
+						case "data-double-sided":
+							if(obj instanceof $c.Sprite3d) obj.setdoubleSided( Boolean(sval) );
+							break;
+						
 							
 						/* View setup */
 						case "data-ortho":
-						case "data-oorthographic":
+						case "data-orthographic":
 							if(obj instanceof $c.View3d) obj.setortho( Boolean(sval) );
 							break;
 						
@@ -816,9 +948,11 @@ ________/\\\\\\\\\____________________________________________
 			var t=this;
 			t.invalidSize=true;
 			t.tgv=new $c.Matrix3d();
-			t._x=0; t._y=0; t._z = 0;
-			t._scaleX=1; t._scaleY=1; t._scaleZ=1;
-			t.rx=0; t.ry=0; t.rz=0;
+			t._x = t._y = t._z = 0;
+			t._scaleX = t._scaleY = t._scaleZ = 1;
+			t.rx = t.ry = t.rz=0;
+			t._pivotX = t._pivotY = t._pivotZ = "center";
+			t.regX = t.regY = t.regZ = 0;
 		},
 		
 		getx :function () { return this._x; },
@@ -834,9 +968,17 @@ ________/\\\\\\\\\____________________________________________
 		setoffsetY :function (v) {this._y += v; $c.setInvalid(this); },
 		setoffsetZ :function (v) {this._z += v; $c.setInvalid(this); },
 		
+		move :function (axis, val) {
+			this._x += axis.x*val; this._y += axis.y*val; this._z += axis.z*val;
+			$c.setInvalid(this);
+		},
+		
+		moveX:function (d) { this.move(this.getXAxis(), d);},
+		moveY:function (d) { this.move(this.getYAxis(), d);},
+		moveZ:function (d) { this.move(this.getZAxis(), d);},
+		
 		getrotateX :function () { return this.rx == 0 ? 0 : this.rx/Math.PI*180; },
-		setrotateX :function (v) 
-		{
+		setrotateX :function (v) {
 			this.rx = v == 0 ? 0 : v*Math.PI/180;
 			this.initAxis();
 			$c.setInvalid(this);
@@ -857,15 +999,6 @@ ________/\\\\\\\\\____________________________________________
 		setoffsetRotateX :function (v) {this.rx += v == 0 ? 0 : v*Math.PI/180; this.initAxis(); $c.setInvalid(this); },
 		setoffsetRotateY :function (v) {this.ry += v == 0 ? 0 : v*Math.PI/180; this.initAxis(); $c.setInvalid(this); },
 		setoffsetRotateZ :function (v) {this.rz += v == 0 ? 0 : v*Math.PI/180; this.initAxis(); $c.setInvalid(this); },
-		
-		move :function (axis, val) {
-			this._x += axis.x*val; this._y += axis.y*val; this._z += axis.z*val;
-			$c.setInvalid(this);
-		},
-		
-		moveX:function (d) { this.move(this.getXAxis(), d);},
-		moveY:function (d) { this.move(this.getYAxis(), d);},
-		moveZ:function (d) { this.move(this.getZAxis(), d);},
 		
 		rotate :function (axis, r) {
 			if(Math.abs(r) < 0.0005) return;
@@ -912,7 +1045,24 @@ ________/\\\\\\\\\____________________________________________
 			$c.setInvalid(this);
 			this.updateRotation(tr);
 		},
-				
+		getpivotX :function() { return this._pivotX; },
+		setpivotX :function (pv) {
+			if(!isNaN(Number(pv))) this._pivotX = Number(pv);
+			else this._pivotX = pv;
+			this.invalidSize = true;
+		},
+		getpivotY :function() { return this._pivotY; },
+		setpivotY :function (pv) {
+			if(!isNaN(Number(pv))) this._pivotY = Number(pv);
+			else this._pivotY = pv;
+			this.invalidSize = true;
+		},
+		getpivotZ :function() { return this._pivotZ; },
+		setpivotZ :function (pv) {
+			if(!isNaN(Number(pv))) this._pivotZ = Number(pv);
+			else this._pivotZ = pv;
+			this.invalidSize = true;
+		},
 		localRotateX:function (d) { this.rotate( this.getXAxis(), d); },
 		localRotateY:function (d) { this.rotate( this.getYAxis(), d); },
 		localRotateZ:function (d) { this.rotate( this.getZAxis(), d); },
@@ -983,6 +1133,7 @@ ________/\\\\\\\\\____________________________________________
 		getscaleZ :function () { return this._scaleZ; },
 		setscaleZ :function (v) { this._scaleZ = v; $c.setInvalid(this); },
 		
+		
 		reset :function () {
 			this.tgv.id();
 			this._x = this._y = this._z = 0;
@@ -1001,13 +1152,81 @@ ________/\\\\\\\\\____________________________________________
 		d.div = null;
 		d.view = null;
 		d.zdepth = -1;
-		d.updateSize = function() {
-			var t = this.div;
-			var w = Math.floor(t.width>0?(t.width*.5) : (t.offsetWidth*.5));
-			var h = Math.floor(t.height>0?(t.height*.5) : (t.offsetHeight*.5));
-			$c.cssProp(t,"transformOrigin", w+"px "+h+"px 0px");
-			t.style.left = "-"+w+"px";
-			t.style.top = "-"+h+"px";
+		d._width = 0;
+		d._height = 0;
+		d._doubleSided = true;
+		d.getdoubleSided = function () {
+			return this._doubleSided;
+		}
+		d.setdoubleSided = function (d) {
+			this._doubleSided = Boolean(d);
+			this.div.style[$c.pfx + "BackfaceVisibility"] = this._doubleSided == true ? "visible" : "hidden";
+			if(!$c.support && typeof $c.degrade === "object") {
+				$c.setInvalid(this);
+			}
+		}
+		d.updateSize = function () 
+		{
+			var d = this;
+			d.invalidSize = false;
+			var t = d.div, to ="";
+			var w = t.width>0? t.width : t.offsetWidth;
+			var h = t.height>0? t.height : t.offsetHeight;
+			
+			d._width = w;
+			d._height = h;
+			var w2 = Math.floor(w*.5);
+			var h2 = Math.floor(h*.5);
+			
+			if(typeof d._pivotX == "number") {
+				d.regX = d._pivotX -w2;
+				to = d._pivotX + "px ";
+			}else if(d._pivotX == "left") {	
+				d.regX = -w2; 
+				to = "0px ";
+			}else if(d._pivotX == "right") {
+				d.regX = w2;
+				to = w+"px ";
+			}else{
+				d.regX = 0;
+				to = w2+"px ";
+			}
+			
+			if(typeof d._pivotY == "number") {
+				d.regY = d._pivotY-h2;
+				to += d._pivotY+"px ";
+			}else if(d._pivotY == "top") {
+				d.regY = -h2;
+				to += "0px ";
+			}else if(d._pivotY == "bottom") {
+				d.regY = h2;
+				to += h+"px ";
+			}else{
+				d.regY = 0;
+				to += h2+"px ";
+			}
+			
+			if(typeof d._pivotZ == "number") {
+				if($c.pfx == "Moz") {
+					d.regZ = d._pivotZ;
+				}else{
+					d.regZ = 0;	
+				}
+				to += (d._pivotZ)+"px";
+			}else{
+				d.regZ = 0;
+				to += "0px";
+			}
+			t.style.left = (-w2)+"px";
+			t.style.top = (-h2)+"px";
+			
+			if($c.support) {
+				$c.cssProp(t,"transformOrigin", to);
+			}else{
+				if( typeof $c.degrade === "object") {	
+					$c.degrade.updateSizeSprite(this);
+				}
+			}
 		}
 		
 		d.update = function () 
@@ -1016,22 +1235,23 @@ ________/\\\\\\\\\____________________________________________
 			{
 				var d = this;
 				
-				if( !$c.isIE ) {
-				  $c.cssProp(d.div, "transform", "translate3d("+d._x+"px,"+(d._y)+"px,"+d._z+"px) rotateY("+(d.getrotateY())+"deg) rotateX("+(d.getrotateX())+"deg) rotateZ("+(d.getrotateZ())+"deg) scale3d("+(d._scaleX)+","+(-d._scaleY)+","+(-d._scaleZ)+")");
-				 
+				if( !$c.isIE ) 
+				{
+				
+				d.div.style[ $c.ctr ] = "translate3d("+(d._x-d.regX)+"px,"+(d._y-d.regY)+"px,"+(d._z-d.regZ)+"px) rotateY("+(d.getrotateY())+"deg) rotateX("+(d.getrotateX())+"deg) rotateZ("+(d.getrotateZ())+"deg) scale3d("+(d._scaleX)+","+(-d._scaleY)+","+(-d._scaleZ)+")";
+				  
 				/*
-				// matrix is buggy in mozilla with css transitions
+				// matrix may be buggy in mozilla with css transitions
 				var r = d.tgv;
-				$c.cssProp(d.div,"transform", "matrix3d("+ (r.a*d._scaleX)+","+(r.b*d._scaleX)+","+(r.c*d._scaleX)+",0,"+
+				 d.div.style[ $c.ctr ] = "matrix3d("+ (r.a*d._scaleX)+","+(r.b*d._scaleX)+","+(r.c*d._scaleX)+",0,"+
 															(-r.e*d._scaleY)+","+(-r.f*d._scaleY)+","+(-r.g*d._scaleY)+",0,"+
 															(-r.i*d._scaleZ)+","+(-r.j*d._scaleZ)+","+(-r.k*d._scaleZ)+",0,"+
-															d._x+","+d._y+","+d._z+",1)");*/
+															(d._x-d.regX)+","+(d._y-d.regY)+","+(d._z-d.regZ)+",1)";*/
 				} else {
 					
 					// concat matrix with transposed camera matrix
 					var t = d.tgv;
 					var p = d.view.tgv;
-					
 					var pa = p.a, pb = (-p.e), pc = -p.i,
 					    pe = p.b, pf = (-p.f), pg = -p.j,
 					    pi = p.c, pj = (-p.g), pk = -p.k;
@@ -1052,20 +1272,23 @@ ________/\\\\\\\\\____________________________________________
 					var rj = (t.i*pb + t.j*pf + t.k*pj)*-d._scaleZ;
 					var rk = (t.i*pc + t.j*pg + t.k*pk)*-d._scaleZ;
 					
-					var rm = d._x*pa + d._y*pe + d._z*pi + px;
-					var rn = d._x*pb + d._y*pf + d._z*pj + py;
-					var ro = d._x*pc + d._y*pg + d._z*pk + pz;
+					var dx = d._x-d.regX;
+					var dy = d._y+d.regY;
+					var dz = d._z-d.regZ;
 					
-					var v0  = ra,	v1 = rb, v2 = rc, 
-						v4  = re,	v5 = rf, v6 = rg,
-						v8  = ri, v9 = rj, v10 = rk,
-						v12 = (rm),  v13 = (rn),  v14 = (ro + d.view._perspective);
-						
+					var rm = dx*pa + dy*pe + dz*pi + px;
+					var rn = dx*pb + dy*pf + dz*pj + py;
+					var ro = dx*pc + dy*pg + dz*pk + pz;
+					
 					d.zdepth = -ro;
 					
-					$c.cssProp(d.div, "transform", "perspective("+d.view._perspective+"px) matrix3d("+v0+","+v1+","+v2+",0,"+v4+","+v5+","+v6+",0,"+v8+","+v9+","+v10+",0,"+v12+","+v13+","+v14+",1)");
+					d.div.style[ $c.ctr ] = "perspective("+d.view._perspective+"px) matrix3d("+ra+","+rb+","+rc+",0,"+re+","+rf+","+rg+",0,"+ri+","+rj+","+rk+",0,"+rm+","+rn+","+(ro+d.view._perspective)+",1)";
 				}
 				
+			}else{
+				if(typeof $c.degrade === "object") {
+					$c.degrade.updateSprite(this);
+				}
 			}
 		}
 		
@@ -1073,23 +1296,25 @@ ________/\\\\\\\\\____________________________________________
 		{
 			this.div = d;
 			d.style.position = "absolute";
-			if(!$c.isIE) {
-				$c.cssProp(d,"transformStyle","preserve-3d");
-			}
+			$c.cssProp(d,"transformStyle","preserve-3d");
 		}
 	}
 	$c.Sprite3d.prototype = new $c.Object3d();
 	
+	$c.degrade=null;
 	$c.isIE = false;
+	$c.stp = {};
+	$c.ctr = "transform";
 	$c.sortFunc = function(a,b) { return b.zdepth-a.zdepth; }
 	$c.support = (function() 
 	{
-		var i,pf,d = document.createElement("div"), prefixes = ["Webkit","Moz","O","khtml","ms"];
+		var i,pf,d = document.createElement("div"), prefixes = ["Webkit","Moz",/*"O","khtml",*/"ms"];
 		for(i=0; i<prefixes.length; i++) {
 			pf = prefixes[i];
 			if( (pf + "Perspective") in d.style ) {
 				$c.pfx = pf;
 				$c.pfxCss = "-"+pf.toLowerCase()+"-";
+				$c.ctr = pf + "Transform";
 				if(pf=="ms"){
 					$c.isIE = true;
 					// for future ie versions prefix can already be removed..
