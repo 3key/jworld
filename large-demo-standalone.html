@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JWorld Standalone Demo</title>
+
+<script type="text/javascript" src="jworld-0.9.15.standalone.js"></script>
+<script type="text/javascript">
+function loaded () 
+{
+	// Call startInterval once on page load only
+	jworld.startInterval();
+	
+	var view = new jworld.View3d( document.getElementById("view"), 600, 400, 60);
+	
+	var cubeW = 7500;
+	var cubeH = 2500;
+	var cubeD = 7500;
+	var el;
+	var items = [];
+	for(var i=0; i<1500; i++) 
+	{
+		el = document.createElement("div");
+		
+		el.className = "sprite";
+		el.id="sprite"+i;
+		el.setAttribute("data-width", 200);
+		el.setAttribute( "data-height", 100);
+		
+		el.style.backgroundColor = "#"+Math.floor(Math.random()*9)+ Math.floor(Math.random()*9)+ Math.floor(Math.random()*9);
+		
+		// Add sprite to the view
+		var sp = view.add(el);
+		
+		// Set sprite properties
+		sp.x( Math.random()*cubeW - cubeW/2 );
+		sp.y( Math.random()*cubeH - cubeH/2 );
+		sp.z( Math.random()*cubeD - cubeD/2 );
+		
+		sp.rotateX( Math.random()*360 );
+		sp.rotateY( Math.random()*15 );
+		sp.rotateZ( Math.random()*45);
+		
+	}
+	
+	var pgx = 0, pgy = 0;
+	document.addEventListener("mousemove", function(e) {
+		
+		view.localRotateX(e.pageY-pgy);
+		view.localRotateY(e.pageX-pgx);
+		
+		pgx = e.pageX;
+		pgy = e.pageY;
+	});
+	
+}
+</script>
+<style type="text/css">
+	#view { background:#000; }
+	.sprite { width: 300px; height: 150px; background:#0C3; }
+</style>
+</head>
+
+<body onload="loaded()">
+	<div id ="view" data-z="-500"></div>
+</body>
+</html>

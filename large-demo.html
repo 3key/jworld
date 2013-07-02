@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JWorld Demo</title>
+<script src="jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="jworld-0.9.15.min.js"></script>
+<script type="text/javascript">
+
+
+var view;
+	
+$(document).ready( function () 
+{
+	view = $("#view");
+	view.world();
+	
+	var cubeW = 25000;
+	var cubeH = 25000;
+	var cubeD = 25000;
+	var el;
+	var items = [];
+		
+	for(var i=0; i<1500; i++) 
+	{
+		el = document.createElement("div");
+		el.className = "sprite";
+		el.id="sprite"+i;
+		
+		// Note: setting the width on the element brings big performance boost at sprite creation
+		el.setAttribute("data-width", 64);
+		el.setAttribute("data-height", 64);
+		
+		el.setAttribute("data-x", Math.random()*cubeW - cubeW/2 );
+		el.setAttribute("data-y", Math.random()*cubeH - cubeH/2 );
+		el.setAttribute("data-z", Math.random()*cubeD - cubeD/2 );
+		
+		el.setAttribute("data-rotate-x", Math.floor( Math.random()*360) );
+		el.setAttribute("data-rotate-y", Math.floor( Math.random()*360) );
+		
+		el.setAttribute("data-scale-x", 1 + Math.random()*15 );
+		el.setAttribute("data-scale-y", 1 + Math.random()*15 );
+		el.innerHTML = "Sprite #" + i;
+		
+		r = Math.floor(Math.random()*9);
+		g = Math.floor(Math.random()*9);
+		b = Math.floor(Math.random()*9);
+		
+		el.style.backgroundColor = "#" + r + "" + g + "" + b;
+		el.style.textAlign = "center";
+		el.style.padding = "4px";
+		el.style.color ="#" + (9-r) + "" + (9-g) + "" + (9-b);
+		items[i] = el;
+	}
+	
+	view.world("addElements", items);
+
+	
+	$(document).on("mousemove", mouse_move);
+	
+	
+});
+
+var pgx = 0, pgy = 0;
+function mouse_move (e) 
+{
+	view.world("set", {localRotateX: e.pageY-pgy, localRotateY: e.pageX-pgx});	
+	pgx = e.pageX;
+	pgy = e.pageY;
+}
+
+function mouse_wheel (event) 
+{
+	 var e = event || window.event, delta = 0, deltaX = 0, deltaY = 0;
+	 
+	// Old school scrollwheel delta
+	if ( e.wheelDelta ) { delta = e.wheelDelta;  }
+	if ( e.detail     ) { delta = e.detail * -1; }
+
+	// New school wheel delta (wheel event)
+	if ( e.deltaY ) {
+		deltaY = e.deltaY * -1;
+		delta  = deltaY;
+	}
+	if ( e.deltaX ) {
+		deltaX = e.deltaX;
+		delta  = deltaX * -1;
+	}
+
+	// Webkit
+	if ( e.wheelDeltaY !== undefined ) { deltaY = e.wheelDeltaY;      }
+	if ( e.wheelDeltaX !== undefined ) { deltaX = e.wheelDeltaX * -1; }
+	
+	if(deltaX === 0 && deltaY === 0) {
+		deltaX = delta;	
+	}
+	
+	view.world("set", { moveX: -deltaX, moveZ: -deltaY  });
+	
+	if(e.preventDefault) e.preventDefault();
+	e.returnValue = false;
+}
+
+if (window.addEventListener) window.addEventListener('DOMMouseScroll', mouse_wheel, false);
+			window.onmousewheel /*= document.onmousewheel */= mouse_wheel;
+</script>
+<style type="text/css">
+	#view { background:#000; }
+	.sprite { width: 64px; height: 64px; background:#0C3; }
+</style>
+</head>
+
+<body>
+
+	<div id ="view">
+    
+    </div>
+
+</body>
+
+
+
+</html>
