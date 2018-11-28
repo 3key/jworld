@@ -7,3 +7,5 @@ It is possible to set camera position, rotation, move and rotate about local axi
 Html elements can be positioned, rotated, and scaled in 3d
 
 Help and demo files are available in the jw-help zip file
+
+Demo: http://3key.github.io/jworld/
