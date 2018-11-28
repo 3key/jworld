@@ -24,11 +24,12 @@ ________/\\\\\\\\\____________________________________________
 		tuo:{},
 		degrade : null,
 		ie : false,
+		isFF: false,
 		stp : {},
 		ctr : "transform",
 		trEnd: "transitionend",
 		anEnd: "animationend",
-		e: 0.000001,
+		e: 0.0000001,
 		r2d: 180/Math.PI,
 		d2r: Math.PI/180,
 		sortFunc : function(a,b) { return b.zd-a.zd; },
@@ -110,8 +111,8 @@ ________/\\\\\\\\\____________________________________________
 					t.wrap2.appendChild(t.div);
 					
 					if(!$c.ie && $c.support) {
-						//$c.css(t.wrap2,"perspectiveOrigin","0px 0px");
-						//$c.css(t.wrap2,"transformOrigin","0px 0px 0px");
+						$c.css(t.wrap2,"perspectiveOrigin","0px 0px");
+						$c.css(t.wrap2,"transformOrigin","0px 0px 0px");
 						$c.css(t.wrap2,"transformStyle","preserve-3d");
 						$c.css(t.div,"transformStyle","preserve-3d");
 					}
@@ -123,12 +124,12 @@ ________/\\\\\\\\\____________________________________________
 					if(!noSetup) {
 						t.addElements(div);	
 					}
-					t.updateSize();
+					// t.updateSize();
 					
 					div.appendChild(t.wrap1);
 					
 				}
-			}
+			};
 			
 			t.addElements = function (div) 
 			{
@@ -168,13 +169,13 @@ ________/\\\\\\\\\____________________________________________
 					}
 					
 				}
-			}
+			};
 			
 			t.add = function (c) {
 				var sp = this.newSprite( c );
 				//sp.updateSize();
 				return sp;
-			}
+			};
 			
 			t.newSprite = function (div) 
 			{
@@ -189,7 +190,7 @@ ________/\\\\\\\\\____________________________________________
 				$c.cancelUpdate(sp);
 				this.div.appendChild(div);
 				return sp;
-			}
+			};
 			
 			t.removeElements = function (div) 
 			{
@@ -210,7 +211,7 @@ ________/\\\\\\\\\____________________________________________
 						if(c.nodeType == 1) this.remove(c);
 					}
 				}
-			}
+			};
 			t.remove = function (c) 
 			{
 				if(c.nodeType == 1) 
@@ -227,31 +228,31 @@ ________/\\\\\\\\\____________________________________________
 						}
 					}
 				}
-			}
-			t.getwidth = function () { return this._width; }
+			};
+			t.getwidth = function () { return this._width; };
 			t.width = function (v) {
 				this._width = v;
 				this.invs = true;	
-			}
-			t.getheight = function () { return this._height; }
+			};
+			t.getheight = function () { return this._height; };
 			t.height = function (v) {
 				this._height = v;
 				this.invs = true;	
-			}
+			};
 			t.ortho = function (enable) {
 				this._ortho = enable;
 				this.fov(this.getfov());
-			}
+			};
 			t.getortho = function () {
 				return this._ortho;	
-			}
+			};
 			t._fov = 0;
 			t.getfov = function () { return this._fov*$c.r2d; };
 			t.fov = function (r) {
 				this._fov = r * $c.d2r;
 				this.perspective( this.getFocalLength() );
 				$c.inv(this);
-			}
+			};
 			t.setFocalLength = function (f) { this._fov = Math.atan2(this._height/2,f)*2; };
 			t.getFocalLength = function () {
 				var f = this._fov/2;
@@ -266,11 +267,11 @@ ________/\\\\\\\\\____________________________________________
 					if(t._ortho) {
 						$c.css(t.wrap2,"perspective","none");
 					}else{
-						$c.css(t.wrap2,"perspective",p+ ($c.pfx == "Webkit" ? "":"px"));
+						$c.css(t.wrap2,"perspective",p+ ($c.pfx == "Webkit" && !$c.isFF ? "":"px"));
 					}
 					$c.inv(t);
 				}
-			}
+			};
 			
 			t.update = function () 
 			{
@@ -320,7 +321,7 @@ ________/\\\\\\\\\____________________________________________
 					}
 					
 				}
-			}
+			};
 			t.updateSize = function() {
 				var t = this, st = t.wrap1.style;
 				t.invs = false;
@@ -335,7 +336,7 @@ ________/\\\\\\\\\____________________________________________
 				if(!$c.support && $c.degrade) {
 					$c.degrade.updateSizeView(t);	
 				}
-			}
+			};
 			t.createView(div, width, height, fov, noSetup);
 		},
 		setupDataTransform :function(d, o) {
@@ -452,7 +453,7 @@ ________/\\\\\\\\\____________________________________________
 			}
 			
 		}
-	}
+	};
 	var $c = jworld;
 	
 	$c.Sprite3d.prototype = {
@@ -729,7 +730,7 @@ ________/\\\\\\\\\____________________________________________
 			}
 			
 			if(typeof d._pivotZ == "number") {
-				if($c.pfx == "Moz") {
+				if($c.pfx == "Moz" || $c.isFF) {
 					d.regZ = d._pivotZ;
 				}else{
 					d.regZ = 0;	
@@ -821,7 +822,7 @@ ________/\\\\\\\\\____________________________________________
 			$c.css(d,"transformStyle","preserve-3d");
 		}
 		
-	} // Sprite3d
+	}; // Sprite3d
 
 	$c.View3d.prototype = new $c.Sprite3d();
 	
@@ -830,10 +831,12 @@ ________/\\\\\\\\\____________________________________________
 			$c.running = true;
 			$c.iid = setInterval($c.interval, 1000/$c.frameRate);
 		}
-	}
+	};
 	
 	$c.support = (function() 
 	{
+	    $c.isFF = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+	    
 		var i,pf,d = document.createElement("div"), prefixes = ["Webkit","Moz","O","ms"];
 		for(i=0; i<prefixes.length; i++) {
 			pf = prefixes[i];
@@ -847,6 +850,7 @@ ________/\\\\\\\\\____________________________________________
 					$c.trEnd = "webkitTransitionEnd";
 					$c.anEnd = "webkitAnimationEnd";
 				}
+				
 				return true;
 			}
 		}

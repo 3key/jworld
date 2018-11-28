@@ -1,50 +1,26 @@
 
 /**
-*
-*
-*________________________________________________________________________________________________
-*______/\\\\\\\\\\\__/\\\______________/\\\______________________________/\\\\\\____________/\\\__        
-* _____\/////\\\///__\/\\\_____________\/\\\_____________________________\////\\\___________\/\\\__       
-*  _________\/\\\_____\/\\\_____________\/\\\________________________________\/\\\___________\/\\\__      
-*   _________\/\\\_____\//\\\____/\\\____/\\\______/\\\\\_____/\\/\\\\\\\_____\/\\\___________\/\\\__     
-*    _________\/\\\______\//\\\__/\\\\\__/\\\_____/\\\///\\\__\/\\\/////\\\____\/\\\______/\\\\\\\\\__    
-*     _________\/\\\_______\//\\\/\\\/\\\/\\\_____/\\\__\//\\\_\/\\\___\///_____\/\\\_____/\\\////\\\__   
-*      __/\\\___\/\\\________\//\\\\\\//\\\\\_____\//\\\__/\\\__\/\\\____________\/\\\____\/\\\__\/\\\__  
-*       _\//\\\\\\\\\__________\//\\\__\//\\\_______\///\\\\\/___\/\\\__________/\\\\\\\\\_\//\\\\\\\/\\_ 
-*        __\/////////____________\///____\///__________\/////_____\///__________\/////////___\///////\//__
-*         _________________________________________________________________________________________________
-*              http://3key.at/jworld   http://github.com/3key/jworld   contact: dr101 [at] gmx [.] at
-*           _________________________________________________________________________________________________
-*                                                     Version 1.0
-*					                      _   _               _   
-*					  __ _ _ __ ___   ___| |_| |__  _   _ ___| |_ 
-*					 / _` |  _ ` _ \ / _ \ __|  _ \| | | / __| __|
-*					| (_| | | | | | |  __/ |_| | | | |_| \__ \ |_  
-*					 \__,_|_| |_| |_|\___|\__|_| |_|\__, |___/\__|
-*					                                |___/         
-*
-*
-*
+* _________________________________________________________________________________________________________________________________________________
+*                                                                JWorld Version 1.1 
 **
 * @name jquery.jworld.js
-* @author Daniel Reitterer (http://3key.at/jworld)
-* @version 0.9.15
-* @codename: Amethyst
-* @date july 2013
+* @author Daniel Reitterer contact: rd101 [at] gmx [.] at
+* @version 1.1.0
+* @codename: Aquamarin
+* @date december 2017
 * @category jQuery plugin
 * @license MIT license
-* @example http://3key.at/jworld
+* @example http://github.com/3key/jworld
 *
 **
-* JWorld is a fast and lightweight 3D-sprite engine based on HTML5 and CSS-3D transforms
-* JWorld  makes it easy to create camera animations in the browser without any plugins.
-* It is possible to set camera position, rotation, move and rotate about local axis, and set the field of view
+* JWorld  makes it easy to create camera animations in the browser without any plugins. 
+* It is a fast and lightweight 3D-sprite engine based on HTML5 and CSS-3D transforms
+* Set camera position and rotation, move and rotate about local axis, and set the field of view
 * Html elements can be positioned, rotated, and scaled in 3d
 *
 **
 * Modes for world function
 *
-* ====================================================
 * add                | Add a div to the view
 * addElements        | Add Array of sprite divs, the children of a div, or a jquery object to a view
 * animation          | Set css keyframe animations
@@ -58,7 +34,6 @@
 * matrixChannel      | Create a new keyframe channel for css animation, arguments: channel-name, optional-object3d, frame1, ... frameN
 * matrixTransition   | Set css transition property for css transform
 * object3d           | Returns the core Object3d object for views and sprites
-* page               | Transform website elements without view transformation
 * remove             | Remove a div from view
 * removeElements     | Remove a list of sprite divs from the view
 * reset              | Reset the transform of the item
@@ -70,8 +45,6 @@
 **
 * Property Table for world function (get/set)
 *
-*      | Name            | Value
-* =====================================================
 * Num  | x               | Object Position
 *      | y               | 
 *      | z               | 
@@ -101,7 +74,7 @@
 * Num  | fov             | Camera field of view in degree
 * Num  | perspective     | Camera perspective
 * Bool | noSetup         | dont create 3d sprites when the view is created, default is false
-* NotUn| clearCss        | clear css3d style sheets
+*      | clearCss        | clear css3d style sheets
 **
 * Examples:
 *
@@ -131,7 +104,6 @@
 *	value = $(elements).world( "scaleZ" ); // get z scale of first Element (0-1)
 *	properties = $(elements).world( "get", {x:0,y:0,z:0, rotateX:0,rotateY:0,rotateZ:0, scaleX:0,scaleY:0,scaleZ:0} ) // get properties of first Element
 *	
-*   // Set properties
 *	$(elements).world( "move", {x:0,y:0,z:1}, 25 ); // move on axis
 *	$(elements).world( "moveX", 3 ); // move on local x axis
 *	$(elements).world( "moveY", 5 ); // move on local y axis
@@ -165,22 +137,18 @@
 * Known Problems
 *
 * Dont use matrixTransition, instead animate every property "by hand" in a frame handler loop.
-* Animation with matrixTransition uses css transitions for animation, but css 3d transitions are different in Webkit Mozilla and IE
-* In Mozilla matrixTransition on views looks sometimes strange but on sprites it should be fine
+* Animation with matrixTransition uses css transitions for animation wich is different in Webkit Mozilla and IE
+* In Mozilla matrixTransition on views looks strange but on sprites it should be fine
 * In IE-10 matrixTransition have no effect on views and looks strange on sprites
 * At least the end frame is the same in all browsers
 * 
-* Problems with click events on transformed sprites in Safari and Chrome
-* The click is not recognized if the sprite is rendered smaller than the original size.
-* 
-* Problems with z-sorting in Firefox 
-*
-* Problems with near clipping/culling of large sprites in Firefox
-*
 * Problems with z-sorting in IE-10
 * In IE sorting is done by jworld with the center of the sprite wich is not very accurate
-*
+* 	
+* Problems with near clipping/culling of large sprites in Mozilla
+* 
 * Since IE don't support full css3d transforms, rendering in IE-10 is very slow compared to Webkit/Mozilla
+*
 */
 
 (function($) {
@@ -199,8 +167,9 @@
 		if(typeof m != "string")
 		{
 			// No string mode specified
-			if(av != undefined) rv = av;
-			
+			if(av != undefined) {
+				 rv = av;
+			}
 			av = m;
 			
 			// default mode
@@ -217,8 +186,10 @@
 				
 				if(!o) 
 				{
-					if($c.iid==null) $c.iid = setInterval($c.interval, 1000/$c.frameRate);
-					
+					if($c.iid==null) {
+						// init frame loop for updating
+						$c.iid = setInterval($c.interval, 1000/$c.frameRate);
+					}
 					// create new view
 					o = new $c.View3d(d,0,0,0,av?av.noSetup:false);
 					it[d.id] = o;
@@ -255,11 +226,11 @@
 							r[n] = o["get"+n];
 						}
 					}else{
-						if(tp == "function") {
-							r[n] = o[n]();
-						}else{
+						//if(tp == "function") {
+						//	r[n] = o[n]();
+						//}else{
 							r[n] = o[n];
-						}
+						//0}
 					}
 					
 				}
@@ -267,27 +238,13 @@
 			}else{
 				return typeof rv == "object" ? rv : null;
 			}
-		}
-		else if(m == "page") 
-		{
-			for(i=0; i<L; i++) {
-				d = t[i];
-				
-				if(av.transition) $c.css(d, "transition", av.transition);
-				if( typeof av.transitionEnd == "function") o.div.addEventListener( $c.trEnd, av.transitionEnd);
-				
-				$c.css(d, "transformOrigin", av.transformOrigin || "50% 50% 0px");
-				$c.css(d, "perspectiveOrigin", av.perspectiveOrigin || "0px 0px");
-				$c.css(d, "transformStyle", av.transformStyle || "preserve-3d");
-				
-				d.style[$c.ctr] = "perspective("+(av.perspective||550)+($c.pfx=="Webkit"?"":"px") +") translate3d("+(av.x||0)+"px,"+(av.y||0)+"px,"+(av.z||0)+"px) rotateY("+(av.rotateY||0)+"deg) rotateX("+(av.rotateX||0)+"deg) rotateZ("+(av.rotateZ||0)+"deg) scale3d("+(av.scaleX||1)+","+(av.scaleY||1)+","+(av.scaleZ||1)+")";
-			}
-		}
-		else if(m == "move" || m == "rotate") {
+		}else if(m == "move" || m == "rotate") {
 			for(i=0; i<L; i++) 
 			{
 				o = it[t[i].id];
-				if(o) o[m](av, rv);
+				if(o) {
+					o[m](av, rv);
+				}
 			}
 		}
 		else if(m == "reset" || m == "update" || m == "updateSize") 
@@ -295,7 +252,9 @@
 			for(i=0; i<L; i++) 
 			{
 				o = it[t[i].id];
-				if(o) o[m]();
+				if(o) {
+					o[m]();
+				}
 			}
 		}
 		else if(m == "matrixTransition") 
@@ -321,7 +280,11 @@
 				for(i=0; i<L; i++) 
 				{
 					o = it[t[i].id];
-					if(o) $c.css(o.div, av, rv);
+					
+					if(o) 
+					{	
+						$c.css(o.div, av, rv);
+					}
 				}
 			}
 		}
@@ -335,7 +298,9 @@
 				if(o) 
 				{
 					$c.css(o.div, "animation", av);
-					if(typeof rv == "function") o.div.addEventListener($c.anEnd, rv);
+					if(typeof rv == "function") {
+						o.div.addEventListener($c.anEnd, rv);
+					}
 				}
 				
 			}
@@ -348,7 +313,9 @@
 			
 			if(arguments.length > 2) {
 				o = it[ typeof arguments[2] == "string" ? arguments[2] : arguments[2].id] || null;
-				if(o) si++;
+				if(o) {
+					si++;	
+				}
 			}
 			
 			for(i=si; i<arguments.length; i++) {
@@ -367,12 +334,52 @@
 					}else{
 						st += $c.pfxCss +"transform: translate3d("+ (tr.x || 0)+"px,"+(tr.y||0)+"px,"+(tr.z||0)+"px) rotateY("+(tr.rotateY||0)+"deg) rotateX("+(tr.rotateX||0)+"deg) rotateZ("+(tr.rotateZ||0)+"deg) scale3d("+(tr.scaleX||1)+","+((tr.scaleY||1)*-1)+","+((tr.scaleZ||1)*-1)+"); ";
 					}
+					st += " } \n";
 				}
 				
-				st += " } \n";
+				
 			}
 			st += '} \n</style>';
 			$("head").append(st);
+		}
+		else if(m == "page") 
+		{
+			// page mode: CSS3D without camera transformation, usefull for websites 3d effects
+			
+			for(i=0; i<L; i++) {
+				d = t[i];
+				
+				if(av.transition != undefined) $c.css(d, "transition", av.transition);
+				
+				if( typeof av.transitionEnd == "function") {
+					o.div.addEventListener( $c.trEnd, av.transitionEnd);
+				}
+				if(av.transformOrigin != undefined)
+					$c.css(d, "transformOrigin", av.transformOrigin);// || "50% 50% 0px");
+					
+				if(av.perspectiveOrigin != undefined)
+					$c.css(d, "perspectiveOrigin", av.perspectiveOrigin);// || "0px 0px");
+				
+				if(av.transformStyle != undefined)
+					$c.css(d, "transformStyle", av.transformStyle);// || "preserve-3d");
+				
+				
+				var pst = "";
+				
+				if(av.perspective != undefined) {
+					var psp = typeof(av.perspective=="string") ? av.perspective : av.perspective + ($c.pfx == "Webkit" ? "" : "px");
+					if( $c.pfx == "ms" ) {
+						pst = "perspective("+ psp +")" ;
+					}else{
+						$c.css(d, "perspective", psp );
+					}
+				}
+					
+				d.style[$c.ctr] = pst+" translate3d("+(av.x||0)+"px,"+(av.y||0)+"px,"+(av.z||0)+"px) rotateY("+(av.rotateY||0)+"deg) rotateX("+(av.rotateX||0)+"deg) rotateZ("+(av.rotateZ||0)+"deg) scale3d("+(av.scaleX||1)+","+(av.scaleY||1)+","+(av.scaleZ||1)+")";
+				/*}else{
+					d.style[$c.ctr] = "translate3d("+(av.x||0)+"px,"+(av.y||0)+"px,"+(av.z||0)+"px) rotateY("+(av.rotateY||0)+"deg) rotateX("+(av.rotateX||0)+"deg) rotateZ("+(av.rotateZ||0)+"deg) scale3d("+(av.scaleX||1)+","+(av.scaleY||1)+","+(av.scaleZ||1)+")";
+				}*/
+			}
 		}
 		else if(m == "object3d") 
 		{ 
@@ -405,7 +412,9 @@
 		}
 		else if(m == "frameRate")
 		{
-			if(av == undefined) return $c.frameRate;
+			if(av == undefined) {
+				return $c.frameRate;
+			}
 			$c.frameRate = av;
 			if($c.iid != null) 
 			{
@@ -468,19 +477,7 @@
 			
 		}
 		return this;
-	} // world 
-	
-/*															  
-________/\\\\\\\\\____________________________________________        
- _____/\\\////////_____________________________________________       
-  ___/\\\/______________________________________________________      
-   __/\\\_________________/\\\\\_____/\\/\\\\\\\______/\\\\\\\\__     
-    _\/\\\_______________/\\\///\\\__\/\\\/////\\\___/\\\/////\\\_    
-     _\//\\\_____________/\\\__\//\\\_\/\\\___\///___/\\\\\\\\\\\__   
-      __\///\\\__________\//\\\__/\\\__\/\\\_________\//\\///////___  
-       ____\////\\\\\\\\\__\///\\\\\/___\/\\\__________\//\\\\\\\\\\_ 
-        _______\/////////_____\/////_____\///____________\//////////__
-*/
+	}; // world 
 	
 	$.fn.world.core = 
 	{
@@ -493,11 +490,12 @@ ________/\\\\\\\\\____________________________________________
 		tuo:{},
 		degrade : null,
 		ie : false,
+		isFF:false,
 		stp : {},
 		ctr : "transform",
 		trEnd: "transitionend",
 		anEnd: "animationend",
-		e: 0.000001,
+		e: 0.0000001,
 		r2d: 180/Math.PI,
 		d2r: Math.PI/180,
 		sortFunc : function(a,b) { return b.zd-a.zd; },
@@ -579,8 +577,8 @@ ________/\\\\\\\\\____________________________________________
 					t.wrap2.appendChild(t.div);
 					
 					if(!$c.ie && $c.support) {
-						//$c.css(t.wrap2,"perspectiveOrigin","0px 0px");
-						//$c.css(t.wrap2,"transformOrigin","0px 0px 0px");
+						$c.css(t.wrap2,"perspectiveOrigin","0px 0px");
+						$c.css(t.wrap2,"transformOrigin","0px 0px 0px");
 						$c.css(t.wrap2,"transformStyle","preserve-3d");
 						$c.css(t.div,"transformStyle","preserve-3d");
 					}
@@ -595,7 +593,7 @@ ________/\\\\\\\\\____________________________________________
 					
 					div.appendChild(t.wrap1);
 				}
-			}
+			};
 			
 			t.addElements = function (div) 
 			{
@@ -635,11 +633,11 @@ ________/\\\\\\\\\____________________________________________
 					}
 					
 				}
-			}
+			};
 			
 			t.add = function (c) {
 				this.newSprite( c );
-			}
+			};
 			
 			t.newSprite = function (div) 
 			{
@@ -654,7 +652,7 @@ ________/\\\\\\\\\____________________________________________
 				$c.cancelUpdate(sp);
 				this.div.appendChild(div);
 				return sp;
-			}
+			};
 			
 			t.removeElements = function (div) 
 			{
@@ -675,7 +673,7 @@ ________/\\\\\\\\\____________________________________________
 						if(c.nodeType == 1) this.remove(c);
 					}
 				}
-			}
+			};
 			t.remove = function (c) 
 			{
 				if(c.nodeType == 1) 
@@ -692,31 +690,31 @@ ________/\\\\\\\\\____________________________________________
 						}
 					}
 				}
-			}
-			t.getwidth = function () { return this._width; }
+			};
+			t.getwidth = function () { return this._width; };
 			t.width = function (v) {
 				this._width = v;
 				this.invs = true;	
-			}
-			t.getheight = function () { return this._height; }
+			};
+			t.getheight = function () { return this._height; };
 			t.height = function (v) {
 				this._height = v;
 				this.invs = true;	
-			}
+			};
 			t.ortho = function (enable) {
 				this._ortho = enable;
 				this.fov(this.getfov());
-			}
+			};
 			t.getortho = function () {
 				return this._ortho;	
-			}
+			};
 			t._fov = 0;
 			t.getfov = function () { return this._fov*$c.r2d; };
 			t.fov = function (r) {
 				this._fov = r * $c.d2r;
 				this.perspective( this.getFocalLength() );
 				$c.inv(this);
-			}
+			};
 			t.setFocalLength = function (f) { this._fov = Math.atan2(this._height/2,f)*2; };
 			t.getFocalLength = function () {
 				var f = this._fov/2;
@@ -731,15 +729,17 @@ ________/\\\\\\\\\____________________________________________
 					if(t._ortho) {
 						$c.css(t.wrap2,"perspective","none");
 					}else{
-						$c.css(t.wrap2,"perspective",p+ ($c.pfx == "Webkit" ? "":"px"));
+						$c.css(t.wrap2,"perspective",p+ ($c.pfx == "Webkit" && !$c.isFF ? "":"px"));
 					}
 					$c.inv(t);
 				}
-			}
+			};
 			
 			t.update = function () 
 			{
 				var t = this;
+				
+				//window.console.log("UpdateView: " +t.cDiv.id + ", " + t._x + ", " + t._y + ", " + t._z);
 				
 				if($c.support) 
 				{
@@ -785,7 +785,7 @@ ________/\\\\\\\\\____________________________________________
 					}
 					
 				}
-			}
+			};
 			t.updateSize = function() {
 				var t = this, st = t.wrap1.style;
 				t.invs = false;
@@ -800,7 +800,7 @@ ________/\\\\\\\\\____________________________________________
 				if(!$c.support && $c.degrade) {
 					$c.degrade.updateSizeView(t);	
 				}
-			}
+			};
 			t.createView(div, width, height, fov, noSetup);
 		},
 		setupDataTransform :function(d, o) {
@@ -917,7 +917,7 @@ ________/\\\\\\\\\____________________________________________
 			}
 			
 		}
-	}
+	};
 	var $c = $.fn.world.core;
 	
 	$c.Sprite3d.prototype = {
@@ -1157,7 +1157,6 @@ ________/\\\\\\\\\____________________________________________
 			if(t.hasAttribute("data-height")) {
 				h = Number( t.getAttribute("data-height") );
 			}else{
-				// Very slow.. reading offsetHeight
 				h = t.height>0? t.height : t.offsetHeight;
 			}
 			
@@ -1194,7 +1193,7 @@ ________/\\\\\\\\\____________________________________________
 			}
 			
 			if(typeof d._pivotZ == "number") {
-				if($c.pfx == "Moz") {
+				if($c.pfx == "Moz" || $c.isFF ) {
 					d.regZ = d._pivotZ;
 				}else{
 					d.regZ = 0;	
@@ -1228,13 +1227,12 @@ ________/\\\\\\\\\____________________________________________
 				var r = $c.r2d;
 				d.div.style[ $c.ctr ] = "translate3d("+(d._x-d.regX)+"px,"+(d._y-d.regY)+"px,"+(d._z-d.regZ)+"px) rotateY("+(d.ry*r)+"deg) rotateX("+(d.rx*r)+"deg) rotateZ("+(d.rz*r)+"deg) scale3d("+(d._scaleX)+","+(-d._scaleY)+","+(-d._scaleZ)+")";
 				
-				  
-				/*
 				// matrix may be buggy in mozilla with css transitions
-				 d.div.style[ $c.ctr ] = "matrix3d("+ (d.ma*d._scaleX)+","+(d.mb*d._scaleX)+","+(d.mc*d._scaleX)+",0,"+
+				/* d.div.style[ $c.ctr ] = "matrix3d("+ (d.ma*d._scaleX)+","+(d.mb*d._scaleX)+","+(d.mc*d._scaleX)+",0,"+
 														(-d.me*d._scaleY)+","+(-d.mf*d._scaleY)+","+(-d.mg*d._scaleY)+",0,"+
 														(-d.mi*d._scaleZ)+","+(-d.mj*d._scaleZ)+","+(-d.mk*d._scaleZ)+",0,"+
 														(d._x-d.regX)+","+(d._y-d.regY)+","+(d._z-d.regZ)+",1)";*/
+														
 				} else {
 					
 					// concat matrix with transposed camera matrix
@@ -1286,12 +1284,14 @@ ________/\\\\\\\\\____________________________________________
 			$c.css(d,"transformStyle","preserve-3d");
 		}
 		
-	} // Sprite3d
+	}; // Sprite3d
 
 	$c.View3d.prototype = new $c.Sprite3d();
 	
 	$c.support = (function() 
 	{
+	    $c.isFF = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+	    
 		var i,pf,d = document.createElement("div"), prefixes = ["Webkit","Moz","O","ms"];
 		for(i=0; i<prefixes.length; i++) {
 			pf = prefixes[i];
@@ -1305,10 +1305,11 @@ ________/\\\\\\\\\____________________________________________
 					$c.trEnd = "webkitTransitionEnd";
 					$c.anEnd = "webkitAnimationEnd";
 				}
+				
 				return true;
 			}
 		}
 		return false;
 	})();
 
-})(jQuery);
+})(jQuery); 

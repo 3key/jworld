@@ -1,10 +1,11 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>jworld 0.9.13 demo</title>
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.js"></script>
-<script type="text/javascript" src="jworld-0.9.15.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, maximum-scale=1, user-scalable=0">
+<title>jworld 1.0 demo</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.2.1.js"></script>
+<script type="text/javascript" src="jworld-1.0.min.js"></script>
 <script type="text/javascript" src="jworld.degrade.html4-0.1.3.js"></script>
 
 <script type="text/javascript">
@@ -13,6 +14,7 @@
 	{
 		// Update the camera size
 		$("#view").world({width:window.innerWidth-16, height:window.innerHeight-16});
+		
 	}
 	
 	$(document).ready(function(e) 
@@ -48,24 +50,28 @@
 		// bit later to skip initial transiton animation
 		setTimeout( function () {
 			$(".sprite").world("matrixTransition", "1s ease-in-out");
+			// resize view to fit window bug in firefox
 		}, 200);
 		
+		$("#view").world("update");
+
 	});
 	
 </script>
 <style type="text/css">
-	* { font-family:"Lucida Grande", "Lucida Sans Unicode", sans-serif; }
-	.title { position:absolute; top: 16px; left: 16px; color:#000; }
-	.info { position:absolute; bottom: 16px; right: 16px; background:#fff; padding:4px; color:#000; }
-	.view { background:#ac3; }
-	.sprite { width: 200px; height: 100px; background:#9f0; border: 4px solid #fff; border-radius: 25px; opacity:.55; padding: 20px; color:#000; font-size: 50px; text-align:center;  }
+	body { font-family:"Lucida Grande", "Lucida Sans Unicode", sans-serif; font-size:1rem;}
+
+	.title { position:absolute; top: 16px; left: 16px; color:#006997; }
+	.info { position:absolute; bottom: 16px; right: 16px; background:#fff; padding:4px; color:#006997; }
+	.view { background:#00bee7; }
+	.sprite { width: 200px; height: 100px; background:#fc0; border: 4px solid #fff; border-radius: 25px; opacity:.55; padding: 20px; color:#006997; font-size: 3rem; text-align:center;  }
 	.blue-sprite { background:#3cf;  }
-	.sprite-back { opacity:0.75; background:#fff; }
+	.sprite-back { opacity:0.75; background:#00bee7; }
 </style>
 </head>
 
 <body>
-	
+	<div class="main">
 	<!-- Here is the view container with some sprites -->
     <div id="view" class="view" data-fov="55" data-y="150" data-z="-500" data-rotate-x="15">
         <div id="sprite1" class="sprite" data-x="-150" data-rotate-y="-45">#1</div>
@@ -77,6 +83,7 @@
     </div>
     
     <div class="title">JWorld plugin for jQuery ... click on the sprites</div>
-    <div class="info"><a href="http://3key.at/jworld">more demos</a></div>
+    <div class="info"><a href="https://github.com/3key/jworld">more demos</a></div>
+	</div>
 </body>
 </html>
