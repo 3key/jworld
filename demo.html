@@ -54,13 +54,11 @@
 		}, 200);
 		
 		$("#view").world("update");
-
 	});
 	
 </script>
 <style type="text/css">
 	body { font-family:"Lucida Grande", "Lucida Sans Unicode", sans-serif; font-size:1rem;}
-
 	.title { position:absolute; top: 16px; left: 16px; color:#006997; }
 	.info { position:absolute; bottom: 16px; right: 16px; background:#fff; padding:4px; color:#006997; }
 	.view { background:#00bee7; }
@@ -69,10 +67,9 @@
 	.sprite-back { opacity:0.75; background:#00bee7; }
 </style>
 </head>
-
 <body>
-	<div class="main">
-	<!-- Here is the view container with some sprites -->
+  <div class="main">
+    <!-- Here is the view container with some sprites -->
     <div id="view" class="view" data-fov="55" data-y="150" data-z="-500" data-rotate-x="15">
         <div id="sprite1" class="sprite" data-x="-150" data-rotate-y="-45">#1</div>
         <div id="sprite1-back" class="sprite sprite-back" data-x="-150" data-rotate-y="-45" data-scale-z="-1" data-scale-x="-1">Hello</div>
@@ -81,9 +78,8 @@
         <div id="sprite3" class="sprite" data-x="150" data-rotate-y="45">#3</div>
         <div id="sprite3-back" class="sprite sprite-back" data-x="150" data-rotate-y="45" data-scale-z="-1" data-scale-x="-1">World</div>
     </div>
-    
     <div class="title">JWorld plugin for jQuery ... click on the sprites</div>
     <div class="info"><a href="https://3key.github.io/jworld/">demos -&gt;</a></div>
-	</div>
+  </div>
 </body>
 </html>
